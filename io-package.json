@@ -1,0 +1,76 @@
+{
+	"common": {
+		"name": "letrika_comgw",
+		"version": "0.0.1",
+		"news": {
+			"0.0.1": {
+				"en": "initial release",
+				"de": "Erstveröffentlichung",
+				"ru": "Начальная версия",
+				"pt": "lançamento inicial",
+				"nl": "Eerste uitgave",
+				"fr": "Première version",
+				"it": "Versione iniziale",
+				"es": "Versión inicial",
+				"pl": "Pierwsze wydanie",
+				"zh-cn": "首次出版"
+			}
+		},
+		"title": "Letrika Communication Gateway",
+		"titleLang": {
+			"en": "Letrika Communication Gateway",
+			"de": "Letrika Kommunikations-Gateway",
+			"ru": "Letrika Communication Gateway",
+			"pt": "Gateway de comunicação Letrika",
+			"nl": "Letrika Communicatie Gateway",
+			"fr": "Passerelle de communication Letrika",
+			"it": "Letrika Communication Gateway",
+			"es": "Letrika Communication Gateway",
+			"pl": "Bramka komunikacyjna Letrika",
+			"zh-cn": "Letrika通信网关"
+		},
+		"desc": {
+			"en": "Collect data from Letrika SMI 260 via communication gateway",
+			"de": "Sammeln Sie Daten vom Letrika SMI 260 über das Kommunikations-Gateway",
+			"ru": "Сбор данных от Letrika SMI 260 через коммуникационный шлюз",
+			"pt": "Colete dados do Letrika SMI 260 via gateway de comunicação",
+			"nl": "Verzamel gegevens van Letrika SMI 260 via de communicatiegateway",
+			"fr": "Collecte de données à partir de Letrika SMI 260 via une passerelle de communication",
+			"it": "Raccogli i dati da Letrika SMI 260 tramite gateway di comunicazione",
+			"es": "Recopilar datos de Letrika SMI 260 a través de la pasarela de comunicación",
+			"pl": "Zbieraj dane z Letrika SMI 260 za pośrednictwem bramki komunikacyjnej",
+			"zh-cn": "通过通信网关从Letrika SMI 260收集数据"
+		},
+		"authors": [
+			"AWhiteKnight <awhiteknight@unity-mail.de>"
+		],
+		"keywords": [
+			"solar",
+			"energy",
+			"metering"
+		],
+		"license": "MIT",
+		"platform": "Javascript/Node.js",
+		"main": "main.js",
+		"icon": "letrika_comgw.png",
+		"enabled": true,
+		"extIcon": "https://raw.githubusercontent.com/AWhiteKnight/ioBroker.letrika_comgw/master/admin/letrika_comgw.png",
+		"readme": "https://github.com/AWhiteKnight/ioBroker.letrika_comgw/blob/master/README.md",
+		"loglevel": "info",
+		"mode": "daemon",
+		"type": "energy",
+		"compact": true,
+		"materialize": true,
+		"dependencies": [
+			{
+				"js-controller": ">=1.4.2"
+			}
+		]
+	},
+	"native": {
+		"option1": true,
+		"option2": "42"
+	},
+	"objects": [],
+	"instanceObjects": []
+}
