@@ -12,7 +12,7 @@
 
 ## letrika_comgw adapter for ioBroker
 
-Collect data from Letrika SMI 260 via communication gateway
+Collects data from Letrika SMI 260 via communication gateway
 
 ## Developer manual
 This section is intended for the developer. It can be deleted later

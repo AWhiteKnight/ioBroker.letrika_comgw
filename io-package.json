@@ -30,21 +30,22 @@
 			"zh-cn": "Letrika通信网关"
 		},
 		"desc": {
-			"en": "Collect data from Letrika SMI 260 via communication gateway",
-			"de": "Sammeln Sie Daten vom Letrika SMI 260 über das Kommunikations-Gateway",
-			"ru": "Сбор данных от Letrika SMI 260 через коммуникационный шлюз",
-			"pt": "Colete dados do Letrika SMI 260 via gateway de comunicação",
-			"nl": "Verzamel gegevens van Letrika SMI 260 via de communicatiegateway",
-			"fr": "Collecte de données à partir de Letrika SMI 260 via une passerelle de communication",
-			"it": "Raccogli i dati da Letrika SMI 260 tramite gateway di comunicazione",
-			"es": "Recopilar datos de Letrika SMI 260 a través de la pasarela de comunicación",
-			"pl": "Zbieraj dane z Letrika SMI 260 za pośrednictwem bramki komunikacyjnej",
+			"en": "Collects data from Letrika SMI 260 via communication gateway",
+			"de": "Sammelt Daten von Letrika SMI 260 über das Kommunikations-Gateway",
+			"ru": "Собирает данные от Letrika SMI 260 через коммуникационный шлюз",
+			"pt": "Coleta dados do Letrika SMI 260 via gateway de comunicação",
+			"nl": "Verzamelt gegevens van Letrika SMI 260 via communicatie gateway",
+			"fr": "Collecte les données de Letrika SMI 260 via une passerelle de communication",
+			"it": "Raccoglie dati da Letrika SMI 260 tramite gateway di comunicazione",
+			"es": "Recopila datos de Letrika SMI 260 a través de la pasarela de comunicación",
+			"pl": "Gromadzi dane z Letrika SMI 260 za pośrednictwem bramki komunikacyjnej",
 			"zh-cn": "通过通信网关从Letrika SMI 260收集数据"
 		},
 		"authors": [
 			"AWhiteKnight <awhiteknight@unity-mail.de>"
 		],
 		"keywords": [
+			"letrika",
 			"solar",
 			"energy",
 			"metering"

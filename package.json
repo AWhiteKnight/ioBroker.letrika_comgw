@@ -1,7 +1,7 @@
 {
   "name": "iobroker.letrika_comgw",
   "version": "0.0.1",
-  "description": "Collect data from Letrika SMI 260 via communication gateway",
+  "description": "Collects data from Letrika SMI 260 via communication gateway",
   "author": {
     "name": "AWhiteKnight",
     "email": "awhiteknight@unity-mail.de"
