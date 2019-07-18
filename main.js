@@ -1,3 +1,9 @@
+/* jshint -W119 */
+/* jshint -W097 */
+/* jshint -W030 */
+/* jshint strict:true */
+/* jslint node: true */
+/* jslint esversion: 6 */
 'use strict';
 
 /*
@@ -57,7 +63,7 @@ class LetrikaComgw extends utils.Adapter {
 		});
 
 		// in this template all states changes inside the adapters namespace are subscribed
-		this.subscribeStates('*');
+		// this.subscribeStates('*');
 
 		/*
 		setState examples
@@ -74,11 +80,11 @@ class LetrikaComgw extends utils.Adapter {
 		await this.setStateAsync('testVariable', { val: true, ack: true, expire: 30 });
 
 		// examples for the checkPassword/checkGroup functions
-		let result = await this.checkPasswordAsync('admin', 'iobroker');
-		this.log.info('check user admin pw ioboker: ' + result);
+		// let result = await this.checkPasswordAsync('admin', 'iobroker');
+		// this.log.info('check user admin pw ioboker: ' + result);
 
-		result = await this.checkGroupAsync('admin', 'admin');
-		this.log.info('check group user admin group admin: ' + result);
+		// result = await this.checkGroupAsync('admin', 'admin');
+		// this.log.info('check group user admin group admin: ' + result);
 	}
 
 	/**
