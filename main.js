@@ -7,6 +7,12 @@
 'use strict';
 
 /*
+ *
+ * letrika_comgw adapter - collects data from Letrika SMI 260 via communication gateway
+ *  (c) 2019 AWhiteKnight
+ *  @author: AWhiteKnight <awhiteknight@unity-mail.de>
+ *  @license: MIT
+ *
  * Created with @iobroker/create-adapter v1.16.0
  */
 

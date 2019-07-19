@@ -1,4 +1,7 @@
+/* eslint-disable no-unused-vars */
 /*global systemDictionary:true */
+/* jshint -W097 */
+/* jslint esversion: 6 */
 'use strict';
 
 systemDictionary = {
