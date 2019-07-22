@@ -22,6 +22,10 @@ const utils = require('@iobroker/adapter-core');
 
 // Load your modules here, e.g.:
 // const fs = require("fs");
+const http = require('http');
+const https = require('https');
+let interval;
+
 
 class LetrikaComgw extends utils.Adapter {
 
@@ -44,53 +48,47 @@ class LetrikaComgw extends utils.Adapter {
 	 * Is called when databases are connected and adapter received configuration.
 	 */
 	async onReady() {
+		this.setStateChanged('info.connection', false, true);
 		// Initialize your adapter here
+		try {
+			this.log.debug('starting letrika_comgw');
+			const request = {
+				host: this.config.comgwIp,
+				port: this.config.comgwPort,
+				path: '',
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			};
+			// read general system information
+			request.path = '/system_info';
+			this.getJSON(request, (result) => {
+				this.log.debug(result);
+				// read server settings
+				request.path ='/get_settings';
+				this.getJSON(request, (result) => {
+					this.log.debug(result);
+					// read available inverters
+					request.path ='/get_inverter_info';
+					this.getJSON(request, (result) => {
+						this.log.debug(result);
+						// read inverter measurement this needs to be done in a loop!
+						request.path = '/get_measurements';
+						const handler = this.getJSON(request, (result) => {
+							this.log.debug(result);
+						});
+						// @ts-ignore
+						interval = setInterval(handler,	this.config.comgwInterval * 60000);
+						this.setStateChanged('info.connection', true, true);
 
-		// The adapters config (in the instance object everything under the attribute "native") is accessible via
-		// this.config:
-		this.log.info('config option1: ' + this.config.option1);
-		this.log.info('config option2: ' + this.config.option2);
-
-		/*
-		For every state in the system there has to be also an object of type state
-		Here a simple template for a boolean variable named "testVariable"
-		Because every adapter instance uses its own unique namespace variable names can't collide with other adapters variables
-		*/
-		await this.setObjectAsync('testVariable', {
-			type: 'state',
-			common: {
-				name: 'testVariable',
-				type: 'boolean',
-				role: 'indicator',
-				read: true,
-				write: true,
-			},
-			native: {},
-		});
-
-		// in this template all states changes inside the adapters namespace are subscribed
-		// this.subscribeStates('*');
-
-		/*
-		setState examples
-		you will notice that each setState will cause the stateChange event to fire (because of above subscribeStates cmd)
-		*/
-		// the variable testVariable is set to true as command (ack=false)
-		await this.setStateAsync('testVariable', true);
-
-		// same thing, but the value is flagged "ack"
-		// ack should be always set to true if the value is received from or acknowledged from the target system
-		await this.setStateAsync('testVariable', { val: true, ack: true });
-
-		// same thing, but the state is deleted after 30s (getState will return null afterwards)
-		await this.setStateAsync('testVariable', { val: true, ack: true, expire: 30 });
-
-		// examples for the checkPassword/checkGroup functions
-		// let result = await this.checkPasswordAsync('admin', 'iobroker');
-		// this.log.info('check user admin pw ioboker: ' + result);
-
-		// result = await this.checkGroupAsync('admin', 'admin');
-		// this.log.info('check group user admin group admin: ' + result);
+					});
+				});
+			});
+		} catch(err) {
+			this.log.error(err);
+			this.setStateChanged('info.connection', false, false);
+		}
 	}
 
 	/**
@@ -99,6 +97,7 @@ class LetrikaComgw extends utils.Adapter {
 	 */
 	onUnload(callback) {
 		try {
+			if(interval) {clearInterval(interval);}
 			this.log.info('cleaned everything up...');
 			callback();
 		} catch (e) {
@@ -153,6 +152,34 @@ class LetrikaComgw extends utils.Adapter {
 	// 	}
 	// }
 
+	getJSON(options, cbOnResult) {
+		const port = options.port == 443 ? https : http;
+
+		let output = '';
+
+		const req = port.request(options, (res) => {
+			res.setEncoding('utf8');
+
+			res.on('data', (chunk) => {
+				output += chunk;
+			});
+
+			res.on('end', () => {
+				this.log.debug(res.statusCode + ':' + output);
+				if(res.statusCode == 200) {
+					cbOnResult(output);
+				} else {
+					this.log.error(`request ${options.method} ${options.path} : ${res.statusCode}`);
+				}
+			});
+		});
+
+		req.on('error', (err) => {
+			this.log.error('error: ' + err.message);
+		});
+
+		req.end();
+	}
 }
 
 // @ts-ignore parent is a valid property on module
