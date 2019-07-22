@@ -30,7 +30,7 @@ let adapter;
 
 async function intervalHandler() {
 	// read inverter data
-	adapter.log.debug('reading inverter');
+	// adapter.log.debug('reading inverter');
 	const reqPanelData = {
 		host: adapter.config.comgwIp,
 		port: adapter.config.comgwPort,
