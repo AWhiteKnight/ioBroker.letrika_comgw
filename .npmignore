@@ -14,7 +14,6 @@ appveyor.yml
 appveyor.yaml
 
 .eslintrc.json
-.eslintrc.js
 
 # npm package files
 iobroker.*.tgz
@@ -25,3 +24,5 @@ admin/i18n
 
 # maintenance scripts
 maintenance/**
+
+ideas*
