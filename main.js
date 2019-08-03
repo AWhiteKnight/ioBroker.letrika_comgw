@@ -24,24 +24,42 @@ const utils = require('@iobroker/adapter-core');
 // const fs = require("fs");
 const http = require('http');
 const https = require('https');
-let interval;
+let intervalLow;
+let intervalHigh;
 
 let adapter;
 
-async function intervalHandler() {
-	// read inverter data
-	// adapter.log.debug('reading inverter');
+async function intervalHandlerLow() {
 	const reqPanelData = {
 		host: adapter.config.comgwIp,
 		port: adapter.config.comgwPort,
-		path: '/get_inverter_info',
+		path: '/system_info',
 		method: 'GET',
 		headers: {
 			'Content-Type': 'application/json'
 		}
 	};
 	adapter.getJSON(reqPanelData, (result) => {
-		adapter.handleInverterInfo(JSON.parse(result), false);
+		adapter.handleSystemInfo(JSON.parse(result));
+	});
+}
+
+async function intervalHandlerHigh() {
+	// read inverter data
+	const reqPanelData = {
+		host: adapter.config.comgwIp,
+		port: adapter.config.comgwPort,
+		path: '/get_changes',
+		method: 'GET',
+		headers: {
+			'Content-Type': 'application/json'
+		}
+	};
+	adapter.getJSON(reqPanelData, (result) => {
+		const obj = JSON.parse(result);
+		adapter.handleInverterInfo(obj.inverter_info);
+		adapter.handlePlantInfo(obj.plant_info);
+		adapter.handleAlarmHistory(obj.alarm_history);
 	});
 }
 
@@ -66,7 +84,7 @@ class LetrikaComgw extends utils.Adapter {
 	 * Is called when databases are connected and adapter received configuration.
 	 */
 	async onReady() {
-		this.setStateChanged('info.connection', false, true);
+		await this.setStateChanged('info.connection', false, true);
 		adapter = this;
 		// Initialize your adapter here
 		try {
@@ -80,27 +98,55 @@ class LetrikaComgw extends utils.Adapter {
 					'Content-Type': 'application/json'
 				}
 			};
-			// read general system information
-			request.path = '/get_initial';
-			this.getJSON(request, (result) => {
-				const obj1 = JSON.parse(result);
-				this.log.debug(JSON.stringify(obj1));
-				// volatile data
-				request.path ='/get_changes';
-				this.getJSON(request, (result) => {
-					const obj2 = JSON.parse(result);
-					// this.log.debug(JSON.stringify(obj2));
-					this.handleInverterInfo(obj2.inverter_info, true);
-					// this.log.debug(JSON.stringify(obj2.plant_info));
-					// this.log.debug(JSON.stringify(obj2.alarm_history));
-					// read available inverters
-					interval = setInterval(intervalHandler,	this.config.comgwInterval * 60000);
-					this.setStateChanged('info.connection', true, true);
-				});
+			const helper = require(__dirname + '/lib/helper.js');
+			// "static" data
+			request.path = '/get_time_settings';
+			await this.getJSON(request, (result) => {
+				const obj = JSON.parse(result);
+				helper.handleTimeSettings(adapter, obj);
 			});
+			request.path = '/get_settings';
+			await this.getJSON(request, (result) => {
+				const obj = JSON.parse(result);
+				helper.handleSettings(adapter, obj);
+			});
+			request.path = '/get_network_settings';
+			await this.getJSON(request, (result) => {
+				const obj = JSON.parse(result);
+				helper.handleNetworkSettings(adapter, obj);
+			});
+			request.path = '/get_cloud_settings';
+			await this.getJSON(request, (result) => {
+				const obj = JSON.parse(result);
+				helper.handleCloudSettings(adapter, obj);
+			});
+
+			// low volatile data
+			helper.createSystemInfoEntries(this);
+			intervalHandlerLow();
+			// read low volatile data once an hour
+			intervalLow = setInterval(intervalHandlerLow, 3600000);
+
+			// highly volatile data
+			helper.createPlantInfoEntries(this);
+			request.path ='/get_changes';
+			await this.getJSON(request, (result) => {
+				const obj = JSON.parse(result);
+				obj.inverter_info.forEach(element => {
+					const helper = require(__dirname + '/lib/helper.js');
+					helper.createInverterEntries(adapter, element);
+				});
+				this.handlePlantInfo(obj.plant_info)
+				this.handleInverterInfo(obj.inverter_info);
+				this.handleAlarmHistory(obj.alarm_history);
+			});
+			// read highly volatile data regularly
+			intervalHigh = setInterval(intervalHandlerHigh,	this.config.comgwInterval * 60000);
+
+			await this.setStateChanged('info.connection', true, true);		
 		} catch(err) {
 			this.log.error(err);
-			this.setStateChanged('info.connection', false, false);
+			await this.setStateChanged('info.connection', false, false);
 		}
 	}
 
@@ -110,7 +156,8 @@ class LetrikaComgw extends utils.Adapter {
 	 */
 	onUnload(callback) {
 		try {
-			if(interval) {clearInterval(interval);}
+			if(intervalLow) {clearInterval(intervalLow);}
+			if(intervalHigh) {clearInterval(intervalHigh);}
 			this.log.info('cleaned everything up...');
 			callback();
 		} catch (e) {
@@ -165,20 +212,16 @@ class LetrikaComgw extends utils.Adapter {
 	// 	}
 	// }
 
-	handleInverterInfo(info, init) {
+	handleInverterInfo(data) {
 		// this.log.debug(JSON.stringify(info));
-		info.forEach(element => {
-			if(init) {
-				const helper = require(__dirname + '/lib/helper.js');
-				helper.createInverterEntries(adapter, element);
-			}
+		data.forEach(element => {
 			// this.log.debug('updating ' + element.inverter);
-			this.setStateChanged(element.inverter + 'hw_version', {val: element.hw_version, ack: true});
-			this.setStateChanged(element.inverter + 'sw_version_pri', {val: element.sw_version_pri, ack: true});
-			this.setStateChanged(element.inverter + 'sw_version_sec', {val: element.sw_version_sec, ack: true});
-			this.setStateChanged(element.inverter + 'max_power', {val: element.max_power, ack: true});
-			this.setStateChanged(element.inverter + 'protocol_ver', {val: element.protocol_ver, ack: true});
-			this.setStateChanged(element.inverter + 'status', {val: element.status == 'working' ? true : false, ack: true});
+			this.setStateChanged(element.inverter + '.hw_version', {val: element.hw_version, ack: true});
+			this.setStateChanged(element.inverter + '.sw_version_pri', {val: element.sw_version_pri, ack: true});
+			this.setStateChanged(element.inverter + '.sw_version_sec', {val: element.sw_version_sec, ack: true});
+			this.setStateChanged(element.inverter + '.max_power', {val: element.max_power, ack: true});
+			this.setStateChanged(element.inverter + '.protocol_ver', {val: element.protocol_ver, ack: true});
+			this.setStateChanged(element.inverter + '.status', {val: element.status == 'working' ? true : false, ack: true});
 
 			this.setStateChanged(element.inverter + '.measurement.energy', {val: element.measurement.energy, ack: true});
 			this.setStateChanged(element.inverter + '.measurement.power', {val: element.measurement.power, ack: true});
@@ -192,6 +235,41 @@ class LetrikaComgw extends utils.Adapter {
 			this.setStateChanged(element.inverter + '.details.sec_dc_voltage', {val: element.details.sec_dc_voltage, ack: true});
 			this.setStateChanged(element.inverter + '.details.alarm', {val: element.details.alarm, ack: true});
 		});
+	}
+
+	handlePlantInfo(data) {
+		this.setStateChanged('info.plant.country', {val: data.country, ack: true});
+		this.setStateChanged('info.plant.total_energy', {val: data.total_energy, ack: true});
+		this.setStateChanged('info.plant.today_energy', {val: data.today_energy, ack: true});
+		this.setStateChanged('info.plant.power', {val: data.power, ack: true});
+		this.setStateChanged('info.plant.cos_phi', {val: data.cos_phi, ack: true});
+		this.setStateChanged('info.plant.cos_phi_mode', {val: data.cos_phi_mode, ack: true});
+		this.setStateChanged('info.plant.max_power', {val: data.max_power, ack: true});
+		this.setStateChanged('info.plant.status', {val: data.status, ack: true});
+		this.setStateChanged('info.plant.price_per_kw', {val: data.price_per_kw, ack: true});
+	}
+
+
+	handleAlarmHistory(data) {
+		this.log.debug(JSON.stringify(data));
+		if(data.length > 0) {
+			adapter.setStateChanged('has_alert', {val: true, ack: true});
+		}
+		data.forEach(element => {
+			const id = element[0];
+			// const timestamp = element[1];
+			// const alert = element[2];
+			const device = '00000000';
+			this.setStateChanged(device + '.has_alert', {val: true, ack: true});
+		});
+	}
+
+	handleSystemInfo(data) {
+		this.setStateChanged('info.system.sw_version', {val: data.sw_version, ack: true});
+		this.setStateChanged('info.system.sys_version', {val: data.sys_version, ack: true});
+		this.setStateChanged('info.system.storage_status', {val: data.storage_status, ack: true});
+		this.setStateChanged('info.system.storage_used', {val: data.storage_used, ack: true});
+		this.setStateChanged('info.system.storage_size', {val: data.storage_size, ack: true});
 	}
 
 	getJSON(options, cbOnResult) {
