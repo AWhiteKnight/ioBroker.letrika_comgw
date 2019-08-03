@@ -17,6 +17,9 @@ Collects data from Letrika SMI 260 via letrika communication gateway.
 
 ## Changelog
 
+### 0.0.2
+* (AWhiteKnight) most of the informations provided
+
 ### 0.0.1
 * (AWhiteKnight) initial release just fetching inverter data
 

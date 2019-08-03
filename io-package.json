@@ -4,8 +4,8 @@
 		"version": "0.0.2",
 		"news": {
 			"0.0.2": {
-				"en": "states for plant settings, node 12",
-				"de": "States für die Installationsvariablen, node 12"
+				"en": "provides most informations, node 12",
+				"de": "Stellt die wesentlichen Informationen bereit, Node 12"
 			},
 			"0.0.1": {
 				"en": "initial release",
