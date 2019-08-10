@@ -1,6 +1,6 @@
 {
   "name": "iobroker.letrika_comgw",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Collects data from Letrika SMI 260 via communication gateway",
   "author": {
     "name": "AWhiteKnight",

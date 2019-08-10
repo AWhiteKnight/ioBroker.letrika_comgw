@@ -1,8 +1,12 @@
 {
 	"common": {
 		"name": "letrika_comgw",
-		"version": "0.0.2",
+		"version": "0.0.3",
 		"news": {
+			"0.0.3": {
+				"en": "translations, code cleanup",
+				"de": "Übersetzungen, Code-Bereinigung"
+			},
 			"0.0.2": {
 				"en": "provides most informations, node 12",
 				"de": "Stellt die wesentlichen Informationen bereit, Node 12"

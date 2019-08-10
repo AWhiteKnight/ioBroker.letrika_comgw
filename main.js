@@ -41,6 +41,7 @@ async function intervalHandlerLow() {
 	};
 	adapter.getJSON(reqPanelData, (result) => {
 		adapter.handleSystemInfo(JSON.parse(result));
+		intervalLow = setTimeout(intervalHandlerLow, 3600000);
 	});
 }
 
@@ -60,6 +61,8 @@ async function intervalHandlerHigh() {
 		adapter.handleInverterInfo(obj.inverter_info);
 		adapter.handlePlantInfo(obj.plant_info);
 		adapter.handleAlarmHistory(obj.alarm_history);
+		intervalHigh = setTimeout(intervalHandlerHigh, adapter.config.comgwInterval * 60000);
+
 	});
 }
 
@@ -74,9 +77,6 @@ class LetrikaComgw extends utils.Adapter {
 			name: 'letrika_comgw',
 		});
 		this.on('ready', this.onReady.bind(this));
-		this.on('objectChange', this.onObjectChange.bind(this));
-		this.on('stateChange', this.onStateChange.bind(this));
-		// this.on('message', this.onMessage.bind(this));
 		this.on('unload', this.onUnload.bind(this));
 	}
 
@@ -84,7 +84,7 @@ class LetrikaComgw extends utils.Adapter {
 	 * Is called when databases are connected and adapter received configuration.
 	 */
 	async onReady() {
-		await this.setStateChanged('info.connection', false, true);
+		// await this.setStateChanged('info.connection', false, true);
 		adapter = this;
 		// Initialize your adapter here
 		try {
@@ -125,7 +125,7 @@ class LetrikaComgw extends utils.Adapter {
 			helper.createSystemInfoEntries(this);
 			intervalHandlerLow();
 			// read low volatile data once an hour
-			intervalLow = setInterval(intervalHandlerLow, 3600000);
+			intervalLow = setTimeout(intervalHandlerLow, 3600000);
 
 			// highly volatile data
 			helper.createPlantInfoEntries(this);
@@ -141,12 +141,12 @@ class LetrikaComgw extends utils.Adapter {
 				this.handleAlarmHistory(obj.alarm_history);
 			});
 			// read highly volatile data regularly
-			intervalHigh = setInterval(intervalHandlerHigh,	this.config.comgwInterval * 60000);
+			intervalHigh = setTimeout(intervalHandlerHigh,	this.config.comgwInterval * 60000);
 
 			await this.setStateChanged('info.connection', true, true);		
 		} catch(err) {
 			this.log.error(err);
-			await this.setStateChanged('info.connection', false, false);
+			await this.setStateChanged('info.connection', false, true);
 		}
 	}
 
@@ -156,61 +156,14 @@ class LetrikaComgw extends utils.Adapter {
 	 */
 	onUnload(callback) {
 		try {
-			if(intervalLow) {clearInterval(intervalLow);}
-			if(intervalHigh) {clearInterval(intervalHigh);}
+			if(intervalLow) {clearTimeout(intervalLow);}
+			if(intervalHigh) {clearTimeout(intervalHigh);}
 			this.log.info('cleaned everything up...');
 			callback();
 		} catch (e) {
 			callback();
 		}
 	}
-
-	/**
-	 * Is called if a subscribed object changes
-	 * @param {string} id
-	 * @param {ioBroker.Object | null | undefined} obj
-	 */
-	onObjectChange(id, obj) {
-		if (obj) {
-			// The object was changed
-			this.log.info(`object ${id} changed: ${JSON.stringify(obj)}`);
-		} else {
-			// The object was deleted
-			this.log.info(`object ${id} deleted`);
-		}
-	}
-
-	/**
-	 * Is called if a subscribed state changes
-	 * @param {string} id
-	 * @param {ioBroker.State | null | undefined} state
-	 */
-	onStateChange(id, state) {
-		if (state) {
-			// The state was changed
-			this.log.info(`state ${id} changed: ${state.val} (ack = ${state.ack})`);
-		} else {
-			// The state was deleted
-			this.log.info(`state ${id} deleted`);
-		}
-	}
-
-	// /**
-	//  * Some message was sent to this instance over message box. Used by email, pushover, text2speech, ...
-	//  * Using this method requires "common.message" property to be set to true in io-package.json
-	//  * @param {ioBroker.Message} obj
-	//  */
-	// onMessage(obj) {
-	// 	if (typeof obj === 'object' && obj.message) {
-	// 		if (obj.command === 'send') {
-	// 			// e.g. send email or pushover or whatever
-	// 			this.log.info('send command');
-
-	// 			// Send response in callback if required
-	// 			if (obj.callback) this.sendTo(obj.from, obj.command, 'Message received', obj.callback);
-	// 		}
-	// 	}
-	// }
 
 	handleInverterInfo(data) {
 		// this.log.debug(JSON.stringify(info));
@@ -251,7 +204,7 @@ class LetrikaComgw extends utils.Adapter {
 
 
 	handleAlarmHistory(data) {
-		this.log.debug(JSON.stringify(data));
+		this.log.debug('alerts: ' + JSON.stringify(data));
 		if(data.length > 0) {
 			adapter.setStateChanged('has_alert', {val: true, ack: true});
 		}

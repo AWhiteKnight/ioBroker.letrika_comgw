@@ -6,39 +6,63 @@
 
 systemDictionary = {
 	'letrika_comgw adapter settings': {
-		'en': 'Adapter settings for letrika_comgw',
-		'de': 'Adaptereinstellungen für letrika_comgw',
-		'ru': 'Настройки адаптера для letrika_comgw',
-		'pt': 'Configurações do adaptador para letrika_comgw',
-		'nl': 'Adapterinstellingen voor letrika_comgw',
-		'fr': "Paramètres d'adaptateur pour letrika_comgw",
-		'it': "Impostazioni dell'adattatore per letrika_comgw",
-		'es': 'Ajustes del adaptador para letrika_comgw',
-		'pl': 'Ustawienia adaptera dla letrika_comgw',
-		'zh-cn': 'letrika_comgw的适配器设置'
+		"en": "Adapter settings for the Letrika communication gateway",
+		"de": "Adaptereinstellungen für das Letrika Kommunikationsgateway",
+		"ru": "Настройки адаптера для коммуникационного шлюза Letrika",
+		"pt": "Configurações do adaptador para o gateway de comunicação Letrika",
+		"nl": "Adapterinstellingen voor de Letrika-communicatie-gateway",
+		"fr": "Paramètres d'adaptateur pour la passerelle de communication Letrika",
+		"it": "Impostazioni dell'adattatore per il gateway di comunicazione Letrika",
+		"es": "Configuración del adaptador para el portal de comunicación Letrika",
+		"pl": "Ustawienia adaptera dla bramy komunikacyjnej Letrika",
+		"zh-cn": "Letrika通信网关的适配器设置"
 	},
-	'option1': {
-		'en': 'option1',
-		'de': 'Option 1',
-		'ru': 'Опция 1',
-		'pt': 'Opção 1',
-		'nl': 'Optie 1',
-		'fr': 'Option 1',
-		'it': 'opzione 1',
-		'es': 'Opción 1',
-		'pl': 'opcja 1',
-		'zh-cn': '选项1'
+	'on save': {
+		'en': 'On save adapter restarts with new config immediately',
+		'de': 'Beim Speichern startet der Adapter sofort mit der neuen Konfiguration',
+		'ru': 'При сохранении адаптер перезапускается с новым конфигом немедленно',
+		'pt': 'Em salvar adaptador reinicia com nova configuração imediatamente',
+		'nl': 'Op save-adapter wordt onmiddellijk opnieuw opgestart met nieuwe config',
+		'fr': 'Lors de la sauvegarde, l’adaptateur redémarre immédiatement avec la nouvelle configuration',
+		'it': 'On save adapter si riavvia immediatamente con la nuova configurazione',
+		'es': 'En guardar adaptador se reinicia con nueva configuración inmediatamente',
+		'pl': 'Po zapisaniu adapter natychmiast uruchamia się ponownie z nową konfiguracją',
+		'zh-cn': '在保存适配器时立即重新启动新配置'
 	},
-	'option2': {
-		'en': 'option2',
-		'de': 'Option 2',
-		'ru': 'option2',
-		'pt': 'opção 2',
-		'nl': 'Optie 2',
-		'fr': 'Option 2',
-		'it': 'opzione 2',
-		'es': 'opcion 2',
-		'pl': 'Opcja 2',
-		'zh-cn': '选项2'
+	'comgwIp': {
+		"en": "IP-Address",
+		"de": "IP Adresse",
+		"ru": "Айпи адрес",
+		"pt": "Endereço de IP",
+		"nl": "IP adres",
+		"fr": "Adresse IP",
+		"it": "Indirizzo IP",
+		"es": "Dirección IP",
+		"pl": "Adres IP",
+		"zh-cn": "IP地址"
+	},
+	'comgwPort': {
+		"en": "IP-Port",
+		"de": "IP-Port",
+		"ru": "IP-порт",
+		"pt": "Porta IP",
+		"nl": "IP-Port",
+		"fr": "Port IP",
+		"it": "IP-Port",
+		"es": "Puerto IP",
+		"pl": "Port IP",
+		"zh-cn": "IP端口"
+	},
+	'comgwInterval': {
+		"en": "Interval",
+		"de": "Intervall",
+		"ru": "интервал",
+		"pt": "Intervalo",
+		"nl": "Interval",
+		"fr": "Intervalle",
+		"it": "Intervallo",
+		"es": "Intervalo",
+		"pl": "Interwał",
+		"zh-cn": "间隔"
 	}
 };
