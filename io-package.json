@@ -1,8 +1,12 @@
 {
 	"common": {
 		"name": "letrika_comgw",
-		"version": "0.0.3",
+		"version": "0.0.4",
 		"news": {
+			"0.0.4": {
+				"en": "code cleanup",
+				"de": "Code-Bereinigung"
+			},
 			"0.0.3": {
 				"en": "translations, code cleanup",
 				"de": "Übersetzungen, Code-Bereinigung"
