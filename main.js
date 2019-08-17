@@ -29,7 +29,7 @@ let intervalHigh;
 
 let adapter;
 
-async function intervalHandlerLow() {
+function intervalHandlerLow() {
 	const reqPanelData = {
 		host: adapter.config.comgwIp,
 		port: adapter.config.comgwPort,
@@ -45,7 +45,7 @@ async function intervalHandlerLow() {
 	});
 }
 
-async function intervalHandlerHigh() {
+function intervalHandlerHigh() {
 	// read inverter data
 	const reqPanelData = {
 		host: adapter.config.comgwIp,
@@ -83,71 +83,75 @@ class LetrikaComgw extends utils.Adapter {
 	/**
 	 * Is called when databases are connected and adapter received configuration.
 	 */
-	async onReady() {
-		// await this.setStateChanged('info.connection', false, true);
+	onReady() {
 		adapter = this;
-		// Initialize your adapter here
-		try {
-			this.log.debug('starting letrika_comgw');
-			const request = {
-				host: this.config.comgwIp,
-				port: this.config.comgwPort,
-				path: '',
-				method: 'GET',
-				headers: {
-					'Content-Type': 'application/json'
-				}
-			};
-			const helper = require(__dirname + '/lib/helper.js');
-			// "static" data
-			request.path = '/get_time_settings';
-			await this.getJSON(request, (result) => {
-				const obj = JSON.parse(result);
-				helper.handleTimeSettings(adapter, obj);
-			});
-			request.path = '/get_settings';
-			await this.getJSON(request, (result) => {
-				const obj = JSON.parse(result);
-				helper.handleSettings(adapter, obj);
-			});
-			request.path = '/get_network_settings';
-			await this.getJSON(request, (result) => {
-				const obj = JSON.parse(result);
-				helper.handleNetworkSettings(adapter, obj);
-			});
-			request.path = '/get_cloud_settings';
-			await this.getJSON(request, (result) => {
-				const obj = JSON.parse(result);
-				helper.handleCloudSettings(adapter, obj);
-			});
+		this.setState('info.connection', false, true, () => {
+			// Initialize your adapter here
+			try {
+				this.log.debug('starting letrika_comgw');
+				const request = {
+					host: this.config.comgwIp,
+					port: this.config.comgwPort,
+					path: '',
+					method: 'GET',
+					headers: {
+						'Content-Type': 'application/json'
+					}
+				};
+				const helper = require(__dirname + '/lib/helper.js');
+				// "static" data
+				request.path = '/get_time_settings';
+				this.getJSON(request, (result) => {
+					const obj = JSON.parse(result);
+					helper.handleTimeSettings(adapter, obj);
 
-			// low volatile data
-			helper.createSystemInfoEntries(this);
-			intervalHandlerLow();
-			// read low volatile data once an hour
-			intervalLow = setTimeout(intervalHandlerLow, 3600000);
+					request.path = '/get_settings';
+					this.getJSON(request, (result) => {
+						const obj = JSON.parse(result);
+						helper.handleSettings(adapter, obj);
 
-			// highly volatile data
-			helper.createPlantInfoEntries(this);
-			request.path ='/get_changes';
-			await this.getJSON(request, (result) => {
-				const obj = JSON.parse(result);
-				obj.inverter_info.forEach(element => {
-					const helper = require(__dirname + '/lib/helper.js');
-					helper.createInverterEntries(adapter, element);
+						request.path = '/get_network_settings';
+						this.getJSON(request, (result) => {
+							const obj = JSON.parse(result);
+							helper.handleNetworkSettings(adapter, obj);
+
+							request.path = '/get_cloud_settings';
+							this.getJSON(request, (result) => {
+								const obj = JSON.parse(result);
+								helper.handleCloudSettings(adapter, obj);
+								
+								// low volatile data
+								helper.createSystemInfoEntries(this);
+								intervalHandlerLow();
+								// read low volatile data once an hour
+								intervalLow = setTimeout(intervalHandlerLow, 3600000);
+
+								// highly volatile data
+								helper.createPlantInfoEntries(this);
+								request.path ='/get_changes';
+								this.getJSON(request, (result) => {
+									const obj = JSON.parse(result);
+									obj.inverter_info.forEach(element => {
+										const helper = require(__dirname + '/lib/helper.js');
+										helper.createInverterEntries(adapter, element);
+									});
+									this.handlePlantInfo(obj.plant_info)
+									this.handleInverterInfo(obj.inverter_info);
+									this.handleAlarmHistory(obj.alarm_history);
+								});
+								// read highly volatile data regularly
+								intervalHigh = setTimeout(intervalHandlerHigh,	this.config.comgwInterval * 60000);
+								// up and running
+								this.setState('info.connection', true, true);		
+							});
+						});
+					});
 				});
-				this.handlePlantInfo(obj.plant_info)
-				this.handleInverterInfo(obj.inverter_info);
-				this.handleAlarmHistory(obj.alarm_history);
-			});
-			// read highly volatile data regularly
-			intervalHigh = setTimeout(intervalHandlerHigh,	this.config.comgwInterval * 60000);
-
-			await this.setStateChanged('info.connection', true, true);		
-		} catch(err) {
-			this.log.error(err);
-			await this.setStateChanged('info.connection', false, true);
-		}
+			} catch(err) {
+				this.log.error(err);
+				this.setState('info.connection', false, true);
+			}
+		});
 	}
 
 	/**
