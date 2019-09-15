@@ -83,7 +83,7 @@ class LetrikaComgw extends utils.Adapter {
 	/**
 	 * Is called when databases are connected and adapter received configuration.
 	 */
-	onReady() {
+	async onReady() {
 		adapter = this;
 		this.setState('info.connection', false, true, () => {
 			// Initialize your adapter here
