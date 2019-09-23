@@ -14,6 +14,7 @@
 
 Collects data from Letrika SMI 260 via letrika communication gateway.
 
+Adapter needs at least nodejs version 8 / ES9 / ECMAScript2018.
 
 ## Changelog
 

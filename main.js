@@ -1,9 +1,6 @@
-/* jshint -W119 */
-/* jshint -W097 */
-/* jshint -W030 */
 /* jshint strict:true */
 /* jslint node: true */
-/* jslint esversion: 6 */
+/* jslint esversion: 9 */
 'use strict';
 
 /*
@@ -27,6 +24,7 @@ const https = require('https');
 let intervalLow;
 let intervalHigh;
 
+/** @type {LetrikaComgw} */
 let adapter;
 
 function intervalHandlerLow() {
@@ -135,7 +133,7 @@ class LetrikaComgw extends utils.Adapter {
 										const helper = require(__dirname + '/lib/helper.js');
 										helper.createInverterEntries(adapter, element);
 									});
-									this.handlePlantInfo(obj.plant_info)
+									this.handlePlantInfo(obj.plant_info);
 									this.handleInverterInfo(obj.inverter_info);
 									this.handleAlarmHistory(obj.alarm_history);
 								});
