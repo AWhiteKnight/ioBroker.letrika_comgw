@@ -3,8 +3,8 @@
 
 [![NPM version](http://img.shields.io/npm/v/iobroker.letrika_comgw.svg)](https://www.npmjs.com/package/iobroker.letrika_comgw)
 [![Downloads](https://img.shields.io/npm/dm/iobroker.letrika_comgw.svg)](https://www.npmjs.com/package/iobroker.letrika_comgw)
-![Number of Installations](http://iobroker.live/badges/moma-installed.svg) 
-![Number of Installations](http://iobroker.live/badges/moma-stable.svg)
+![Number of Installations](http://iobroker.live/badges/letrika_comgw-installed.svg) 
+![Number of Installations](http://iobroker.live/badges/letrika_comgw-stable.svg)
 [![Dependency Status](https://img.shields.io/david/AWhiteKnight/iobroker.letrika_comgw.svg)](https://david-dm.org/AWhiteKnight/iobroker.letrika_comgw)
 [![Known Vulnerabilities](https://snyk.io/test/github/AWhiteKnight/ioBroker.letrika_comgw/badge.svg)](https://snyk.io/test/github/AWhiteKnight/ioBroker.letrika_comgw)
 
