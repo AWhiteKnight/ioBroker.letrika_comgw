@@ -45,7 +45,7 @@ function intervalHandlerLow() {
 		adapter.handleSystemInfo(JSON.parse(result));
 		//intervalLow = setTimeout(intervalHandlerLow, 3600000);
 		//wait(10*1000).then(() => saySomething("10 seconds")).catch(failureCallback);
-		wait(3600000).then(() => intervalHandlerLow()).catch(() () => {intervalHandlerLow()});
+		wait(3600000).then(() => intervalHandlerLow()).catch(() => {intervalHandlerLow()});
 	});
 }
 
@@ -66,7 +66,7 @@ function intervalHandlerHigh() {
 		adapter.handlePlantInfo(obj.plant_info);
 		adapter.handleAlarmHistory(obj.alarm_history);
 		//intervalHigh = setTimeout(intervalHandlerHigh, adapter.config.comgwInterval * 60000);
-		wait(60000).then(() => intervalHandlerHigh()).catch(() () => {intervalHandlerHigh()});
+		wait(60000).then(() => intervalHandlerHigh()).catch(() => {intervalHandlerHigh()});
 
 	});
 }
