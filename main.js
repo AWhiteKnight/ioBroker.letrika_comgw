@@ -143,7 +143,7 @@ class LetrikaComgw extends utils.Adapter {
 									this.handleAlarmHistory(obj.alarm_history);
 								});
 								// read highly volatile data regularly
-								intervallHandlerHigh()
+								intervalHandlerHigh()
 								//intervalHigh = setTimeout(intervalHandlerHigh,	this.config.comgwInterval * 60000);
 								// up and running
 								this.setState('info.connection', true, true);		
