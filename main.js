@@ -24,8 +24,10 @@ const utils = require('@iobroker/adapter-core');
 // const fs = require("fs");
 const http = require('http');
 const https = require('https');
-let intervalLow;
-let intervalHigh;
+//let intervalLow;
+//let intervalHigh;
+
+const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 let adapter;
 
@@ -41,7 +43,9 @@ function intervalHandlerLow() {
 	};
 	adapter.getJSON(reqPanelData, (result) => {
 		adapter.handleSystemInfo(JSON.parse(result));
-		intervalLow = setTimeout(intervalHandlerLow, 3600000);
+		//intervalLow = setTimeout(intervalHandlerLow, 3600000);
+		//wait(10*1000).then(() => saySomething("10 seconds")).catch(failureCallback);
+		wait(3600000).then(() => intervalHandlerLow()).catch(() () => {intervalHandlerLow()});
 	});
 }
 
@@ -61,7 +65,8 @@ function intervalHandlerHigh() {
 		adapter.handleInverterInfo(obj.inverter_info);
 		adapter.handlePlantInfo(obj.plant_info);
 		adapter.handleAlarmHistory(obj.alarm_history);
-		intervalHigh = setTimeout(intervalHandlerHigh, adapter.config.comgwInterval * 60000);
+		//intervalHigh = setTimeout(intervalHandlerHigh, adapter.config.comgwInterval * 60000);
+		wait(60000).then(() => intervalHandlerHigh()).catch(() () => {intervalHandlerHigh()});
 
 	});
 }
@@ -122,9 +127,9 @@ class LetrikaComgw extends utils.Adapter {
 								
 								// low volatile data
 								helper.createSystemInfoEntries(this);
-								intervalHandlerLow();
 								// read low volatile data once an hour
-								intervalLow = setTimeout(intervalHandlerLow, 3600000);
+								intervalHandlerLow();
+								//intervalLow = setTimeout(intervalHandlerLow, 3600000);
 
 								// highly volatile data
 								helper.createPlantInfoEntries(this);
@@ -140,7 +145,8 @@ class LetrikaComgw extends utils.Adapter {
 									this.handleAlarmHistory(obj.alarm_history);
 								});
 								// read highly volatile data regularly
-								intervalHigh = setTimeout(intervalHandlerHigh,	this.config.comgwInterval * 60000);
+								intervallHandlerHigh()
+								//intervalHigh = setTimeout(intervalHandlerHigh,	this.config.comgwInterval * 60000);
 								// up and running
 								this.setState('info.connection', true, true);		
 							});
@@ -160,8 +166,8 @@ class LetrikaComgw extends utils.Adapter {
 	 */
 	onUnload(callback) {
 		try {
-			if(intervalLow) {clearTimeout(intervalLow);}
-			if(intervalHigh) {clearTimeout(intervalHigh);}
+			//if(intervalLow) {clearTimeout(intervalLow);}
+			//if(intervalHigh) {clearTimeout(intervalHigh);}
 			this.log.info('cleaned everything up...');
 			callback();
 		} catch (e) {
