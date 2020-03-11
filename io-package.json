@@ -1,8 +1,12 @@
 {
 	"common": {
 		"name": "letrika_comgw",
-		"version": "0.0.4",
+		"version": "0.0.5",
 		"news": {
+			"0.0.5": {
+				"en": "Issue fixes",
+				"de": "Issue Behebung"
+			},
 			"0.0.4": {
 				"en": "code cleanup",
 				"de": "Code-Bereinigung"
@@ -76,7 +80,7 @@
 		"materialize": true,
 		"dependencies": [
 			{
-				"js-controller": ">=1.4.2"
+				"js-controller": ">=2.2.0"
 			}
 		]
 	},
