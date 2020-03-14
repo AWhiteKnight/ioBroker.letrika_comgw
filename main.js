@@ -124,33 +124,20 @@ class LetrikaComgw extends utils.Adapter {
 								helper.createSystemInfoEntries(this);
 								// read low volatile data once an hour
 								intervalHandlerLow();
-								//intervalLow = setTimeout(intervalHandlerLow, 3600000);
 
 								// highly volatile data
 								helper.createPlantInfoEntries(this);
-								request.path ='/get_changes';
-								this.getJSON(request, (result) => {
-									const obj = JSON.parse(result);
-									obj.inverter_info.forEach(element => {
-										const helper = require(__dirname + '/lib/helper.js');
-										helper.createInverterEntries(adapter, element);
-									});
-									this.handlePlantInfo(obj.plant_info);
-									this.handleInverterInfo(obj.inverter_info);
-									this.handleAlarmHistory(obj.alarm_history);
-								});
 								// read highly volatile data regularly
 								intervalHandlerHigh();
-								//intervalHigh = setTimeout(intervalHandlerHigh,	this.config.comgwInterval * 60000);
 								// up and running
-								this.setState('info.connection', true, true);		
+								this.setStateAsync('info.connection', true, true);		
 							});
 						});
 					});
 				});
 			} catch(err) {
 				this.log.error(err);
-				this.setState('info.connection', false, true);
+				this.setStateAsync('info.connection', false, true);
 			}
 		});
 	}
@@ -161,8 +148,8 @@ class LetrikaComgw extends utils.Adapter {
 	 */
 	onUnload(callback) {
 		try {
-			//if(intervalLow) {clearTimeout(intervalLow);}
-			//if(intervalHigh) {clearTimeout(intervalHigh);}
+			if(intervalLow) {clearTimeout(intervalLow);}
+			if(intervalHigh) {clearTimeout(intervalHigh);}
 			this.log.info('cleaned everything up...');
 			callback();
 		} catch (e) {
@@ -174,37 +161,37 @@ class LetrikaComgw extends utils.Adapter {
 		// this.log.debug(JSON.stringify(info));
 		data.forEach(async element => {
 			// this.log.debug('updating ' + element.inverter);
-			await this.setStateChanged(element.inverter + '.hw_version', {val: element.hw_version, ack: true});
-			await this.setStateChanged(element.inverter + '.sw_version_pri', {val: element.sw_version_pri, ack: true});
-			await this.setStateChanged(element.inverter + '.sw_version_sec', {val: element.sw_version_sec, ack: true});
-			await this.setStateChanged(element.inverter + '.max_power', {val: element.max_power, ack: true});
-			await this.setStateChanged(element.inverter + '.protocol_ver', {val: element.protocol_ver, ack: true});
-			await this.setStateChanged(element.inverter + '.status', {val: element.status == 'working' ? true : false, ack: true});
+			await this.setStateChangedAsync(element.inverter + '.hw_version', {val: element.hw_version, ack: true});
+			await this.setStateChangedAsync(element.inverter + '.sw_version_pri', {val: element.sw_version_pri, ack: true});
+			await this.setStateChangedAsync(element.inverter + '.sw_version_sec', {val: element.sw_version_sec, ack: true});
+			await this.setStateChangedAsync(element.inverter + '.max_power', {val: element.max_power, ack: true});
+			await this.setStateChangedAsync(element.inverter + '.protocol_ver', {val: element.protocol_ver, ack: true});
+			await this.setStateChangedAsync(element.inverter + '.status', {val: element.status == 'working' ? true : false, ack: true});
 
-			await this.setStateChanged(element.inverter + '.measurement.energy', {val: element.measurement.energy, ack: true});
-			await this.setStateChanged(element.inverter + '.measurement.power', {val: element.measurement.power, ack: true});
+			await this.setStateChangedAsync(element.inverter + '.measurement.energy', {val: element.measurement.energy, ack: true});
+			await this.setStateChangedAsync(element.inverter + '.measurement.power', {val: element.measurement.power, ack: true});
 
-			await this.setStateChanged(element.inverter + '.details.max_power_soft', {val: element.details.max_power_soft, ack: true});
-			await this.setStateChanged(element.inverter + '.details.cos_phi', {val: element.details.cos_phi, ack: true});
-			await this.setStateChanged(element.inverter + '.details.power_status', {val: element.details.power_status == 'on' ? true : false, ack: true});
-			await this.setStateChanged(element.inverter + '.details.grid_freq', {val: element.details.grid_freq, ack: true});
-			await this.setStateChanged(element.inverter + '.details.dcdc_temp', {val: element.details.dcdc_temp, ack: true});
-			await this.setStateChanged(element.inverter + '.details.dcac_temp', {val: element.details.dcac_temp, ack: true});
-			await this.setStateChanged(element.inverter + '.details.sec_dc_voltage', {val: element.details.sec_dc_voltage, ack: true});
-			await this.setStateChanged(element.inverter + '.details.alarm', {val: element.details.alarm, ack: true});
+			await this.setStateChangedAsync(element.inverter + '.details.max_power_soft', {val: element.details.max_power_soft, ack: true});
+			await this.setStateChangedAsync(element.inverter + '.details.cos_phi', {val: element.details.cos_phi, ack: true});
+			await this.setStateChangedAsync(element.inverter + '.details.power_status', {val: element.details.power_status == 'on' ? true : false, ack: true});
+			await this.setStateChangedAsync(element.inverter + '.details.grid_freq', {val: element.details.grid_freq, ack: true});
+			await this.setStateChangedAsync(element.inverter + '.details.dcdc_temp', {val: element.details.dcdc_temp, ack: true});
+			await this.setStateChangedAsync(element.inverter + '.details.dcac_temp', {val: element.details.dcac_temp, ack: true});
+			await this.setStateChangedAsync(element.inverter + '.details.sec_dc_voltage', {val: element.details.sec_dc_voltage, ack: true});
+			await this.setStateChangedAsync(element.inverter + '.details.alarm', {val: element.details.alarm, ack: true});
 		});
 	}
 
 	async handlePlantInfo(data) {
-		await this.setStateChanged('info.plant.country', {val: data.country, ack: true});
-		await this.setStateChanged('info.plant.total_energy', {val: data.total_energy, ack: true});
-		await this.setStateChanged('info.plant.today_energy', {val: data.today_energy, ack: true});
-		await this.setStateChanged('info.plant.power', {val: data.power, ack: true});
-		await this.setStateChanged('info.plant.cos_phi', {val: data.cos_phi, ack: true});
-		await this.setStateChanged('info.plant.cos_phi_mode', {val: data.cos_phi_mode, ack: true});
-		await this.setStateChanged('info.plant.max_power', {val: data.max_power, ack: true});
-		await this.setStateChanged('info.plant.status', {val: data.status, ack: true});
-		await this.setStateChanged('info.plant.price_per_kw', {val: data.price_per_kw, ack: true});
+		await this.setStateChangedAsync('info.plant.country', {val: data.country, ack: true});
+		await this.setStateChangedAsync('info.plant.total_energy', {val: data.total_energy, ack: true});
+		await this.setStateChangedAsync('info.plant.today_energy', {val: data.today_energy, ack: true});
+		await this.setStateChangedAsync('info.plant.power', {val: data.power, ack: true});
+		await this.setStateChangedAsync('info.plant.cos_phi', {val: data.cos_phi, ack: true});
+		await this.setStateChangedAsync('info.plant.cos_phi_mode', {val: data.cos_phi_mode, ack: true});
+		await this.setStateChangedAsync('info.plant.max_power', {val: data.max_power, ack: true});
+		await this.setStateChangedAsync('info.plant.status', {val: data.status, ack: true});
+		await this.setStateChangedAsync('info.plant.price_per_kw', {val: data.price_per_kw, ack: true});
 	}
 
 
@@ -229,17 +216,17 @@ class LetrikaComgw extends utils.Adapter {
 			} else {
 				hasAlert = false;
 			}
-			this.setStateChanged(id + '.has_alert', {val: hasAlert, ack: true});
+			await this.setStateChangedAsync(id + '.has_alert', {val: hasAlert, ack: true});
 		});
-		adapter.setStateChanged('has_alert', {val: anyAlert, ack: true});
+		adapter.setStateChangedAsync('has_alert', {val: anyAlert, ack: true});
 	}
 
 	async handleSystemInfo(data) {
-		await this.setStateChanged('info.system.sw_version', {val: data.sw_version, ack: true});
-		await this.setStateChanged('info.system.sys_version', {val: data.sys_version, ack: true});
-		await this.setStateChanged('info.system.storage_status', {val: data.storage_status, ack: true});
-		await this.setStateChanged('info.system.storage_used', {val: data.storage_used, ack: true});
-		await this.setStateChanged('info.system.storage_size', {val: data.storage_size, ack: true});
+		await this.setStateChangedAsync('info.system.sw_version', {val: data.sw_version, ack: true});
+		await this.setStateChangedAsync('info.system.sys_version', {val: data.sys_version, ack: true});
+		await this.setStateChangedAsync('info.system.storage_status', {val: data.storage_status, ack: true});
+		await this.setStateChangedAsync('info.system.storage_used', {val: data.storage_used, ack: true});
+		await this.setStateChangedAsync('info.system.storage_size', {val: data.storage_size, ack: true});
 	}
 
 	getJSON(options, cbOnResult) {
