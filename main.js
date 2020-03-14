@@ -21,8 +21,8 @@ const utils = require('@iobroker/adapter-core');
 // const fs = require("fs");
 const http = require('http');
 const https = require('https');
-//let intervalLow;
-//let intervalHigh;
+let intervalLow;
+let intervalHigh;
 
 const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -41,9 +41,7 @@ function intervalHandlerLow() {
 	};
 	adapter.getJSON(reqPanelData, (result) => {
 		adapter.handleSystemInfo(JSON.parse(result));
-		//intervalLow = setTimeout(intervalHandlerLow, 3600000);
-		//wait(10*1000).then(() => saySomething("10 seconds")).catch(failureCallback);
-		wait(3600000).then(() => intervalHandlerLow()).catch(() => {intervalHandlerLow()});
+		intervalLow = wait(3600000).then(() => intervalHandlerLow()).catch(() => {intervalHandlerLow();});
 	});
 }
 
@@ -63,8 +61,7 @@ function intervalHandlerHigh() {
 		adapter.handleInverterInfo(obj.inverter_info);
 		adapter.handlePlantInfo(obj.plant_info);
 		adapter.handleAlarmHistory(obj.alarm_history);
-		//intervalHigh = setTimeout(intervalHandlerHigh, adapter.config.comgwInterval * 60000);
-		wait(60000).then(() => intervalHandlerHigh()).catch(() => {intervalHandlerHigh()});
+		intervalHigh = wait(60000).then(() => intervalHandlerHigh()).catch(() => {intervalHandlerHigh();});
 
 	});
 }
@@ -143,7 +140,7 @@ class LetrikaComgw extends utils.Adapter {
 									this.handleAlarmHistory(obj.alarm_history);
 								});
 								// read highly volatile data regularly
-								intervalHandlerHigh()
+								intervalHandlerHigh();
 								//intervalHigh = setTimeout(intervalHandlerHigh,	this.config.comgwInterval * 60000);
 								// up and running
 								this.setState('info.connection', true, true);		
@@ -213,16 +210,28 @@ class LetrikaComgw extends utils.Adapter {
 
 	handleAlarmHistory(data) {
 		this.log.debug('alerts: ' + JSON.stringify(data));
-		if(data.length > 0) {
-			adapter.setStateChanged('has_alert', {val: true, ack: true});
-		}
+		let anyAlert = false;
+		let hasAlert = false;
+		// show alerts for 7 days
+		const compare = (new Date().getTime() / 1000) - (7 * 86400);
 		data.forEach(async element => {
-			const id = element[0];
-			// const timestamp = element[1];
-			// const alert = element[2];
-			const device = '00000000';
-			await this.setStateChanged(device + '.has_alert', {val: true, ack: true});
+			let id = element[0].toString(16).toUpperCase();
+			if(element[1] >= compare) {
+				hasAlert = true;
+				anyAlert = true;
+				// add leading '0'
+				for(let i = 8-id.length; i < 8; i++ ) {
+					id = '0' + id;
+				}
+				const timestamp = new Date(element[1]*1000);
+				const alertId = element[2];
+				adapter.log.info(id + ':' +  timestamp + ':' +  alertId);
+			} else {
+				hasAlert = false;
+			}
+			this.setStateChanged(id + '.has_alert', {val: hasAlert, ack: true});
 		});
+		adapter.setStateChanged('has_alert', {val: anyAlert, ack: true});
 	}
 
 	async handleSystemInfo(data) {
