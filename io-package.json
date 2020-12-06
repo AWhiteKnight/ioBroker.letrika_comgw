@@ -82,7 +82,9 @@
 			{
 				"js-controller": ">=2.2.0"
 			}
-		]
+		],
+		"connectionType": "local",
+		"dataSource": "poll"
 	},
 	"native": {
 		"comgwIp": "127.0.0.1",
