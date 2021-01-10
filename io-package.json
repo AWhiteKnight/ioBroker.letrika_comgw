@@ -1,8 +1,12 @@
 {
 	"common": {
 		"name": "letrika_comgw",
-		"version": "0.0.5",
+		"version": "0.0.6",
 		"news": {
+			"0.0.6": {
+				"en": "Security fixes",
+				"de": "Sicherheitsprobleme beheben"
+			},
 			"0.0.5": {
 				"en": "Issue fixes",
 				"de": "Issue Behebung"
