@@ -84,7 +84,10 @@
 		"materialize": true,
 		"dependencies": [
 			{
-				"js-controller": ">=2.2.0"
+				"admin": ">=4.2.0"
+			},
+			{
+				"js-controller": ">=3.2.0"
 			}
 		],
 		"connectionType": "local",
@@ -96,5 +99,36 @@
 		"comgwInterval": 2
 	},
 	"objects": [],
-	"instanceObjects": []
+	"instanceObjects": [
+		{
+			"_id": "",
+			"type": "meta",
+			"common": {
+			  "name": "",
+			  "type": "meta.user"
+			},
+			"native": {}
+		},
+	  	{
+			"_id": "info",
+			"type": "channel",
+			"common": {
+				"name": "Information"
+			},
+			"native": {}
+		},
+		{
+			"_id": "info.connection",
+			"type": "state",
+			"common": {
+				"role": "indicator.connected",
+				"name": "Device or service connected",
+				"type": "boolean",
+				"read": true,
+				"write": false,
+				"def": false
+			},
+			"native": {}
+		}
+	]
 }
