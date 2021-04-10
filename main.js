@@ -201,6 +201,7 @@ class LetrikaComgw extends utils.Adapter {
 		let hasAlert = false;
 		// show alerts for 7 days
 		const compare = (new Date().getTime() / 1000) - (7 * 86400);
+		const compare2 = (new Date().getTime() / 1000) - (5 * 60);
 		data.forEach(async element => {
 			let id = element[0].toString(16).toUpperCase();
 			if(element[1] >= compare) {
@@ -212,7 +213,10 @@ class LetrikaComgw extends utils.Adapter {
 				}
 				const timestamp = new Date(element[1]*1000);
 				const alertId = element[2];
-				adapter.log.info(id + ':' +  timestamp + ':' +  alertId);
+				// only log for 5 minutes
+				if(element[1] >= compare2) {
+					adapter.log.info(id + ':' +  timestamp + ':' +  alertId);
+				}
 			} else {
 				hasAlert = false;
 			}
