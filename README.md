@@ -21,7 +21,7 @@ Adapter needs at least nodejs version 8 / ES9 / ECMAScript2018.
 ## Changelog
 
 ### 0.0.6
-* (AWhiteKnight) fixed security alert
+* (AWhiteKnight) fixed security alert, remove node 10 from tests, issues #12-14
 
 ### 0.0.5
 * (AWhiteKnight) fixed issues and some minor bugs
