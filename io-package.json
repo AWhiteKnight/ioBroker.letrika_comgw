@@ -78,6 +78,7 @@
 		"extIcon": "https://raw.githubusercontent.com/AWhiteKnight/ioBroker.letrika_comgw/master/admin/letrika_comgw.png",
 		"readme": "https://github.com/AWhiteKnight/ioBroker.letrika_comgw/blob/master/README.md",
 		"loglevel": "info",
+		"tier": 2,
 		"mode": "daemon",
 		"type": "energy",
 		"compact": true,
