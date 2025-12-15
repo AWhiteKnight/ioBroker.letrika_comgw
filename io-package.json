@@ -72,7 +72,6 @@
 		],
 		"license": "MIT",
 		"platform": "Javascript/Node.js",
-		"main": "main.js",
 		"icon": "letrika_comgw.png",
 		"enabled": true,
 		"extIcon": "https://raw.githubusercontent.com/AWhiteKnight/ioBroker.letrika_comgw/master/admin/letrika_comgw.png",
