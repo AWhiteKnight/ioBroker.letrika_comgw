@@ -18,9 +18,9 @@
 const utils = require('@iobroker/adapter-core');
 
 // Load your modules here, e.g.:
-// const fs = require("fs");
-const http = require('http');
-const https = require('https');
+// const fs = require("node:fs");
+const http = require('node:http');
+const https = require('node:https');
 let intervalLow;
 let intervalHigh;
 
