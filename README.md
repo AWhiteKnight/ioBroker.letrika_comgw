@@ -38,6 +38,8 @@ Adapter needs at least nodejs version 8 / ES9 / ECMAScript2018.
 ### 0.0.1
 * (AWhiteKnight) initial release just fetching inverter data
 
+[Older changelogs can be found there](CHANGELOG_OLD.md)
+
 ## License
 MIT License
 
