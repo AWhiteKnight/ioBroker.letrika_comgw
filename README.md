@@ -20,6 +20,10 @@ Adapter needs at least nodejs version 8 / ES9 / ECMAScript2018.
 
 ## Changelog
 
+
+### **WORK IN PROGRESS**
+- (ioBroker-Bot) Adapter requires js-controller >= 6.0.11 now.
+
 ### 0.0.6
 * (AWhiteKnight) fixed security alert, remove node 10 from tests, issues #12-14
 
